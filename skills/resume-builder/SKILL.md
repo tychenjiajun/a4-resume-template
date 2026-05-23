@@ -1,27 +1,21 @@
 ---
 name: resume-builder
-description: Generate printable A4 resume/CV from user-provided experience data. Use when user asks to "make resume", "create CV", "build resume based on my experience", or wants a printable resume document.
+description: Build printable A4 resumes with SCSS theming, automatic color palettes, and WCAG AA a11y compliance. Use when user asks to "make resume", "create CV", "build resume based on my experience", or wants a printable resume with accessibility verification.
 ---
 
 # Resume Builder
 
-Generate professional A4 resumes from user experience data with WCAG AA accessibility compliance.
+Interview the user to build a 1–3 page A4 resume, then verify with automated tests.
 
 ## Quick Start
 
-Typical usage: `make resume based on my experience <content>`
+Typical usage: `make a resume based on my experience`
 
-**5-step workflow:**
+## Workflow
 
-1. **Setup** — Clone and install dependencies
-2. **Theme** — Choose color, configure SCSS
-3. **Content** — Write HTML with user data
-4. **Verify** — Run tests, check screenshots
-5. **Preview** — Start server for user review
+### 1. Detect or Setup
 
-## Workflow Details
-
-### Step 1: Project Setup
+Check if `index.html` exists in the current directory. If yes, skip clone and run `pnpm install`. If not:
 
 ```bash
 git clone https://github.com/tychenjiajun/a4-resume-template.git
@@ -29,187 +23,77 @@ cd a4-resume-template
 pnpm install
 ```
 
-Verify structure:
-- `styles/_palette.scss` — Color palette generator
-- `styles/theme.scss` — Layout styles
-- `index.html` — Resume template (2 A4 pages)
-- `tests/` — Integration + a11y tests
+### 2. Read the Template
 
-### Step 2: Choose Theme Color
+Read `index.html` — this is the starting point. It contains placeholder content with the project's HTML structure and CSS classes. You are **not** limited to this exact layout. Add, remove, or reorder sections, blocks, and classes to fit the user's needs. See [REFERENCE.md](REFERENCE.md) for the full CSS class toolkit and interview templates.
 
-1. **Analyze user content** — Industry, tone, personal brand
-2. **Select base color** — Edit `styles/_palette.scss`:
+Key layout primitives:
+- `.resume-page` — each A4 page (1–3 of these)
+- `.resume-grid` + `.resume-main` + `.resume-sidebar` — two-column page 1 layout
+- `.entry` / `.entry--compact` — work experience or project entries
+- `.sidebar-card` / `.tags` / `.tag` — sidebar content and skill tags
+- `.highlights` / `.expectation-status` / `.section` — additional block types
 
-```scss
-// Change this line:
-$primary-base: #1B4F72 !default;  // Deep navy (financial/professional)
+### 3. Interview the User (Priority-first)
 
-// Options by industry:
-// Tech/Startup:     #2563EB (blue), #059669 (green)
-// Finance/Legal:    #1B4F72 (navy), #7C3AED (purple)
-// Creative/Design:  #DC2626 (red), #D97706 (orange)
-// Healthcare:       #0891B2 (teal), #4F46E5 (indigo)
-// Academia:         #6B7280 (gray), #374151 (dark gray)
+Interview one section at a time. For each section, ask structured questions in order, adapt follow-ups based on responses. See [REFERENCE.md](REFERENCE.md) for full question templates.
+
+**Order:**
+1. **Work Experience** — most impactful; org, dates, title, 3–5 quantified bullet points per role
+2. **Skills** — language/framework/tool tags
+3. **Professional Summary** — synthesize from experience above
+4. **Header** — name, location, contact links, years of experience
+5. **Education, Certifications, Languages** — quick rounds
+6. **Projects** — page 2+ content (skip if ≤1 page)
+
+After each section, edit `index.html` with the user's answers. Offer multiple-choice options where sensible (e.g., resume tone, tag groupings).
+
+### 4. Choose Theme
+
+Analyze the user's industry, role, and tone. Select a base hex color using the heuristics in [REFERENCE.md](REFERENCE.md#color-selection-heuristics), or match their brand/company color. Edit `$primary-base` in `styles/_palette.scss`, then:
+
+```bash
+pnpm build:css
 ```
 
-3. **Compile SCSS** — `pnpm build:css`
+The SCSS compiler will error if any color combination fails WCAG AA (4.5:1 contrast) — this is the safety net. If compilation fails, pick a darker or more saturated variant and retry.
 
-The palette auto-generates 10 shades (50–900) with a11y contrast verification at compile time.
-
-### Step 3: Write HTML Content
-
-Edit `index.html` with user's experience data:
-
-**Structure (2-page A4):**
-
-```html
-<!-- Page 1: Header + Main content -->
-<div class="resume-page">
-  <header class="header">
-    <h1 class="header-name">User Name</h1>
-    <div class="header-meta">
-      <span>Location</span>
-      <span>Years of Experience</span>
-    </div>
-    <div class="header-contact">
-      <a href="tel:...">📞 Phone</a>
-      <a href="mailto:...">✉️ Email</a>
-      <a href="...">🔗 LinkedIn/Portfolio</a>
-    </div>
-  </header>
-  
-  <main class="resume-main">
-    <section class="section">
-      <h2 class="section-title">Professional Summary</h2>
-      <p>...</p>
-    </section>
-    
-    <section class="section">
-      <h2 class="section-title">Work Experience</h2>
-      <div class="entry">
-        <div class="entry-header">
-          <span class="entry-org">Company</span>
-          <span class="entry-dates">YYYY–YYYY</span>
-        </div>
-        <div class="entry-role">Job Title</div>
-        <ul class="entry-duties">
-          <li>Responsibility 1</li>
-          <li>Responsibility 2</li>
-        </ul>
-      </div>
-    </section>
-  </main>
-  
-  <aside class="resume-sidebar">
-    <div class="sidebar-card">
-      <h3 class="sidebar-title">Education</h3>
-      <p class="sidebar-text">...</p>
-    </div>
-    <div class="sidebar-card">
-      <h3 class="sidebar-title">Skills</h3>
-      <div class="tags">
-        <span class="tag">Skill 1</span>
-        <span class="tag">Skill 2</span>
-      </div>
-    </div>
-  </aside>
-</div>
-
-<!-- Page 2: Projects/Additional experience -->
-<div class="resume-page">
-  <section class="section">
-    <h2 class="section-title">Projects</h2>
-    ...
-  </section>
-</div>
-```
-
-**Content checklist:**
-- [ ] Name, contact, location in header
-- [ ] Professional summary (3–5 sentences)
-- [ ] Work experience (most recent first)
-- [ ] Education, certifications, skills in sidebar
-- [ ] Projects (if applicable) on page 2
-
-### Step 4: Verify with Tests
+### 5. Verify
 
 ```bash
 pnpm test
 ```
 
-**Test suite (17 tests):**
-- Layout: No ellipsis truncation, all sections visible
-- A11y: WCAG A/AA violations (axe-core)
-- Screenshots: Page 1, Page 2 (normal + print mode)
+**Test coverage:**
+- Ellipsis truncation detection (normal + print mode)
+- All sections visible, header + contact present
+- WCAG A/AA a11y violations (axe-core, 4 scan targets)
+- Screenshot capture (6 screenshots)
 
-**If tests fail:**
-- Contrast errors → Use darker shade in SCSS
-- Ellipsis truncation → Reduce content or adjust spacing
-- Missing sections → Check HTML structure
+**On failure:**
+- **Auto-fix** without asking: missing sections, print-preview class, SCSS recompile, screenshot baselines
+- **Ask user** before changing: truncation fixes (reword or shorten), contrast adjustments (darker shade vs. lighter text), content rebalancing across pages
 
-### Step 4b: Visual Review (Multimodal)
+Re-verify after fixes until green.
 
-If agent has vision capabilities:
+### 6. Visual Review & Handoff
 
-```bash
-# Screenshots saved to screenshots/
-ls screenshots/
-# page-1-normal.png, page-2-normal.png
-# page-1-print-preview.png, page-2-print-preview.png
-```
+Screenshots are saved to `screenshots/`. If you have vision, inspect them for:
+- Balanced columns and spacing
+- No orphaned content
+- Readable font sizes at print scale
 
-Check:
-- [ ] No text overflow/clipping
-- [ ] Balanced layout (columns, spacing)
-- [ ] Consistent styling
-- [ ] Readable at print scale
-
-### Step 5: Preview for User
+Start the dev server:
 
 ```bash
 pnpm dev
-# Server running at http://localhost:3000
 ```
 
-Open browser for user:
-- Normal view: `http://localhost:3000`
-- Print preview: `http://localhost:3000/?print`
+Tell the user:
+- **Live preview**: `http://localhost:3000` (normal) or `http://localhost:3000/?print` (print preview)
+- **Save as PDF**: `Cmd+P` / `Ctrl+P` → "Save as PDF" → enable "Background graphics" → margins "None"
+- **Source file**: `index.html` (ready to edit or print)
 
-**Print instructions for user:**
-1. Press `Cmd+P` (Mac) / `Ctrl+P` (Windows)
-2. Select "Save as PDF" or printer
-3. Enable "Background graphics"
-4. Set margins to "None" (CSS handles this)
+## Reference
 
-## Color Selection Guide
-
-| Industry/Tone | Suggested Base Color | Notes |
-|--------------|---------------------|-------|
-| Tech/Startup | `#2563EB` (blue) | Modern, trustworthy |
-| Finance | `#1B4F72` (navy) | Professional, conservative |
-| Creative | `#DC2626` (red) | Bold, distinctive |
-| Healthcare | `#0891B2` (teal) | Calming, clean |
-| Academia | `#6B7280` (gray) | Neutral, scholarly |
-| Legal | `#374151` (dark gray) | Formal, serious |
-
-All colors auto-generate a11y-compliant shades — no manual contrast calculation needed.
-
-## Common Issues
-
-| Issue | Solution |
-|-------|----------|
-| Text truncated | Reduce content length or increase spacing |
-| Low contrast | SCSS compile will error — use darker shade |
-| Wrong page break | Move content between `.resume-page` divs |
-| Missing on print | Check `@media print` styles |
-
-## File Reference
-
-| File | Purpose |
-|------|---------|
-| `styles/_palette.scss` | Color generation, a11y checks |
-| `styles/theme.scss` | Layout, typography, print styles |
-| `index.html` | Resume content |
-| `tests/resume.spec.ts` | Layout tests |
-| `tests/a11y.spec.ts` | Accessibility tests |
-| `tests/screenshots.spec.ts` | Visual capture |
+See [REFERENCE.md](REFERENCE.md) for CSS class toolkit, interview question templates, color selection details, and troubleshooting.
