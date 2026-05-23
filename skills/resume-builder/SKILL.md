@@ -37,13 +37,21 @@ pnpm build:css
 
 Pick any hex color — the compiler auto-generates a full palette and rejects combinations that fail contrast requirements. If it errors, try a darker or more saturated variant.
 
-### 3. Verify (optional)
+### 3. Verify
+
+Tests run inside `scripts/`:
 
 ```bash
-pnpm test
+cd scripts
+pnpm test                      # all tests
+pnpm test -- tests/resume.spec.ts       # layout only
+pnpm test -- tests/a11y.spec.ts         # a11y only
+pnpm test -- tests/screenshots.spec.ts  # screenshots only
+pnpm test -- tests/overflow.spec.ts     # overflow only
+pnpm test -- tests/blank-space.spec.ts  # blank space only
 ```
 
-Tests check for layout issues (overflow, truncation, blank space), accessibility, and visual output. Tests are suggestions — skip, modify, or ignore as needed.
+Tests check for layout issues (overflow, truncation, blank space), accessibility, and visual output.
 
 ### 4. Preview
 
