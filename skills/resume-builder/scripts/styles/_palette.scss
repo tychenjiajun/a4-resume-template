@@ -1,0 +1,271 @@
+// ============================================================
+// Color Palette Generator
+// Generates a full color system from a single base color,
+// ensuring all combinations meet WCAG AA contrast (4.5:1).
+// ============================================================
+
+@use 'sass:color';
+@use 'sass:math';
+@use 'sass:list';
+@use 'sass:map';
+
+// ----- Configuration: change this to re-theme the entire resume -----
+$primary-base: #1B4F72 !default;   // Deep navy blue — financial/professional
+
+// ----- Internal helpers -----
+
+/// Linearize a single sRGB channel for luminance calc
+@function linearize($v) {
+  @if $v <= 0.04045 {
+    @return math.div($v, 12.92);
+  }
+  @return math.pow(math.div($v + 0.055, 1.055), 2.4);
+}
+
+/// Relative luminance per WCAG 2.1
+@function luminance($c) {
+  $r: linearize(math.div(color.channel($c, 'red', $space: rgb), 255));
+  $g: linearize(math.div(color.channel($c, 'green', $space: rgb), 255));
+  $b: linearize(math.div(color.channel($c, 'blue', $space: rgb), 255));
+  @return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+}
+
+/// WCAG contrast ratio
+@function contrast($bg, $fg) {
+  $l1: luminance($bg);
+  $l2: luminance($fg);
+  @if $l1 > $l2 {
+    @return math.div($l1 + 0.05, $l2 + 0.05);
+  }
+  @return math.div($l2 + 0.05, $l1 + 0.05);
+}
+
+/// Pick black or white text for a given background, whichever has ≥ 4.5 contrast
+@function text-on($bg) {
+  @if contrast($bg, #ffffff) >= 4.5 {
+    @return #ffffff;
+  }
+  @return #1a1a1a;
+}
+
+/// Generate equally-spaced tint → shade ramp (10 stops, 50–900)
+@function palette($base) {
+  $result: ();
+  $h: color.channel($base, 'hue', $space: hsl);
+  $s: color.channel($base, 'saturation', $space: hsl);
+  $l: color.channel($base, 'lightness', $space: hsl);
+
+  $stops: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900);
+  $base-idx: 5; // 500 maps to the base color
+
+  @for $i from 1 through list.length($stops) {
+    $stop: list.nth($stops, $i);
+    // offset inverted: 50=lightest, 900=darkest
+    $offset: ($base-idx - $i) * 7%;
+    $adj: math.clamp(3%, $l + $offset, 95%);
+    $result: map.set($result, $stop, hsl($h, $s, $adj));
+  }
+  @return $result;
+}
+
+/// Neutral gray ramp
+@function neutral-ramp() {
+  $result: ();
+  $stops: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900);
+  @for $i from 1 through list.length($stops) {
+    $stop: list.nth($stops, $i);
+    $l: 97% - ($i - 1) * 10%;
+    $result: map.set($result, $stop, hsl(210, 4%, $l));
+  }
+  @return $result;
+}
+
+// ============================================================
+// Smart Color Selection Functions
+// ============================================================
+
+/// Select the best shade for TEXT on a LIGHT background.
+/// Tries shades from lightest to darkest until contrast ≥ 4.5:1 is met.
+/// Returns the shade number (e.g., 500, 600, 700).
+@function select-text-shade($palette, $start: 500, $end: 900) {
+  $shades: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900);
+  $start-idx: list.index($shades, $start);
+  $end-idx: list.index($shades, $end);
+
+  @for $i from $start-idx through $end-idx {
+    $shade: list.nth($shades, $i);
+    $color: map.get($palette, $shade);
+    @if contrast(#ffffff, $color) >= 4.5 {
+      @return $shade;
+    }
+  }
+  // Fallback to darkest if none meet requirement
+  @return $end;
+}
+
+/// Select the best shade for a BACKGROUND that will have DARK text on it.
+/// Tries shades from lightest until we find one where dark text has ≥ 4.5:1 contrast.
+/// Returns the shade number.
+@function select-bg-shade($palette, $start: 50, $end: 300) {
+  $shades: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900);
+  $start-idx: list.index($shades, $start);
+  $end-idx: list.index($shades, $end);
+
+  @for $i from $start-idx through $end-idx {
+    $shade: list.nth($shades, $i);
+    $color: map.get($palette, $shade);
+    @if contrast($color, #1a1a1a) >= 4.5 {
+      @return $shade;
+    }
+  }
+  // Fallback to lightest if none meet requirement (will use white text instead)
+  @return $start;
+}
+
+/// Select the best shade for a BACKGROUND that will have WHITE text on it.
+/// Tries shades from darkest until we find one where white text has ≥ 4.5:1 contrast.
+/// Returns the shade number.
+@function select-bg-shade-light($palette, $start: 900, $end: 500) {
+  $shades: (900, 800, 700, 600, 500, 400, 300, 200, 100, 50);
+  $start-idx: list.index($shades, $start);
+  $end-idx: list.index($shades, $end);
+
+  @for $i from $start-idx through $end-idx {
+    $shade: list.nth($shades, $i);
+    $color: map.get($palette, $shade);
+    @if contrast($color, #ffffff) >= 4.5 {
+      @return $shade;
+    }
+  }
+  // Fallback to darkest
+  @return $start;
+}
+
+/// Select the best TEXT shade to pair with a given BACKGROUND shade.
+/// Returns the shade number for text color.
+@function select-text-for-bg($palette, $bg-shade) {
+  $bg-color: map.get($palette, $bg-shade);
+  @if contrast($bg-color, #ffffff) >= 4.5 {
+    @return 50; // Use lightest (closest to white)
+  }
+  @return 900; // Use darkest (closest to black)
+}
+
+/// Get the actual color value for text on a given background shade.
+@function get-text-color-for-bg($palette, $bg-shade) {
+  $bg-color: map.get($palette, $bg-shade);
+  @return text-on($bg-color);
+}
+
+// ----- Generate palettes -----
+$primary:   palette($primary-base);
+$neutral:   neutral-ramp();
+
+// ----- Auto-select optimal shades for different use cases -----
+$text-on-light: select-text-shade($primary, 500, 900);           // For headings, accents on white
+$bg-with-dark-text: select-bg-shade($primary, 50, 400);          // For tag backgrounds, light backgrounds
+$bg-with-light-text: select-bg-shade-light($primary, 900, 500);  // For dark backgrounds with white text
+
+// Calculate complementary shades for paired elements
+$tag-bg-shade: $bg-with-dark-text;
+$tag-text-shade: if($tag-bg-shade == 50, 800, select-text-for-bg($primary, $tag-bg-shade));
+
+// ============================================================
+// Export CSS custom properties with auto-selected colors
+// ============================================================
+:root {
+  // Primary palette with auto-calculated text colors
+  @each $stop, $color in $primary {
+    --color-primary-#{$stop}: #{$color};
+    --color-primary-#{$stop}-on: #{text-on($color)};
+  }
+
+  // Neutral palette with auto-calculated text colors
+  @each $stop, $color in $neutral {
+    --color-neutral-#{$stop}: #{$color};
+    --color-neutral-#{$stop}-on: #{text-on($color)};
+  }
+
+  // Semantic aliases with auto-selected shades
+  --color-surface:          var(--color-neutral-50);
+  --color-surface-on:       var(--color-neutral-50-on);
+  --color-surface-raised:   #ffffff;
+  --color-surface-raised-on: #1a1a1a;
+
+  // Heading & Accent: auto-selected for best contrast on white
+  --color-heading:          var(--color-primary-#{$text-on-light});
+  --color-heading-on:       var(--color-primary-#{$text-on-light}-on);
+  --color-accent:           var(--color-primary-#{$text-on-light});
+  --color-accent-on:        var(--color-primary-#{$text-on-light}-on);
+
+  // Text colors
+  --color-text-primary:     #1a1a1a;
+  --color-text-secondary:   var(--color-neutral-700);
+  --color-text-muted:       var(--color-neutral-600);
+
+  // Borders & dividers
+  --color-border:           var(--color-neutral-300);
+  --color-divider:          var(--color-neutral-200);
+
+  // Tag colors: auto-selected background with contrasting text
+  --color-tag-bg:           var(--color-primary-#{$tag-bg-shade});
+  --color-tag-text:         var(--color-primary-#{$tag-text-shade});
+
+  // Decorative elements (bullets, accents)
+  --color-decoration:       var(--color-primary-#{$text-on-light});
+  --color-decoration-muted: var(--color-primary-400);
+
+  // Typography
+  --font-family:            'Inter', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  --font-mono:              'JetBrains Mono', 'SF Mono', 'Cascadia Code', monospace;
+
+  --fs-3xl: 1.5rem;    // name
+  --fs-2xl: 1.125rem;  // section title
+  --fs-xl:  1rem;      // subtitle / job title
+  --fs-lg:  0.9375rem;
+  --fs-base: 0.8125rem;
+  --fs-sm:  0.75rem;
+  --fs-xs:  0.6875rem;
+
+  --lh-tight:   1.25;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.65;
+
+  --fw-bold:    700;
+  --fw-semibold:600;
+  --fw-medium:  500;
+  --fw-normal:  400;
+
+  // Spacing
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+
+  // Layout
+  --page-padding:    1.5rem;
+  --section-gap:     0.75rem;
+  --column-gap:      1.5rem;
+  --border-radius:   4px;
+}
+
+// ============================================================
+// A11Y verification — compile-time assertions
+// (Sass will error if any text-on-background pair fails 4.5:1)
+// ============================================================
+@mixin a11y-check($bg, $fg) {
+  $c: contrast($bg, $fg);
+  @if $c < 4.5 {
+    @error "A11Y FAIL: contrast #{$c} < 4.5 between bg #{$bg} and fg #{$fg}";
+  }
+}
+
+// Verify ALL auto-selected color combinations
+@include a11y-check(#ffffff, map.get($primary, $text-on-light));         // heading/accent on white
+@include a11y-check(map.get($primary, $tag-bg-shade), map.get($primary, $tag-text-shade)); // tag text on tag bg
+@include a11y-check(map.get($neutral, 50), #1a1a1a);                      // body text on surface
+@include a11y-check(#ffffff, #1a1a1a);                                    // body text on white bg
+@include a11y-check(map.get($neutral, 50), map.get($primary, $tag-text-shade)); // tag text on neutral bg (fallback check)

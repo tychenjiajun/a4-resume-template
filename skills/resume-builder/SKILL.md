@@ -13,15 +13,17 @@ Typical usage: `make a resume based on my experience`
 
 ## Workflow
 
-### 1. Detect or Setup
+### 1. Setup
 
-Check if `index.html` exists in the current directory. If yes, skip clone and run `pnpm install`. If not:
+The `scripts/` directory alongside this SKILL.md is a self-contained project. `cd` into it and install:
 
 ```bash
-git clone https://github.com/tychenjiajun/a4-resume-template.git
-cd a4-resume-template
+cd <skill-dir>/scripts
 pnpm install
+npx playwright install chromium
 ```
+
+`<skill-dir>` is the directory containing this SKILL.md. All subsequent commands (`pnpm build:css`, `pnpm test`, `pnpm dev`) run from there.
 
 ### 2. Read the Template
 

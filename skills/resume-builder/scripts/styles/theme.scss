@@ -1,0 +1,408 @@
+// ============================================================
+// Resume Theme — imports palette, defines layout & components
+// ============================================================
+@use 'palette' as *;
+
+// ============================================================
+// Reset & Base
+// ============================================================
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+  color: var(--color-text-primary);
+  background: var(--color-neutral-100);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+// ============================================================
+// A4 Page Container
+// ============================================================
+.resume-page {
+  width: 210mm;
+  height: 297mm;
+  overflow: hidden;
+  page-break-after: always;
+  position: relative;
+  background: #ffffff;
+  padding: var(--page-padding);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+  margin-bottom: 1rem;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+// ============================================================
+// Two-column layout for page 1
+// ============================================================
+.resume-grid {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  grid-template-rows: auto 1fr;
+  gap: 0 var(--column-gap);
+  height: 100%;
+}
+
+.resume-header {
+  grid-column: 1 / -1;
+}
+
+.resume-main {
+  grid-column: 1;
+}
+
+.resume-sidebar {
+  grid-column: 2;
+}
+
+// ============================================================
+// Header
+// ============================================================
+.header {
+  padding-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
+  border-bottom: 2px solid var(--color-accent);
+
+  &-name {
+    font-size: var(--fs-3xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-heading);
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+  }
+
+  &-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin-top: var(--space-2);
+    font-size: var(--fs-sm);
+    color: var(--color-text-secondary);
+
+    span {
+      white-space: nowrap;
+    }
+  }
+
+  &-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin-top: var(--space-2);
+    font-size: var(--fs-sm);
+
+    a,
+    span {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      white-space: nowrap;
+
+      &:hover {
+        color: var(--color-accent);
+      }
+    }
+  }
+}
+
+// ============================================================
+// Sections
+// ============================================================
+.section {
+  margin-bottom: var(--section-gap);
+
+  &-title {
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-semibold);
+    color: var(--color-heading);
+    padding-bottom: var(--space-1);
+    margin-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-divider);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 1em;
+      background: var(--color-decoration);
+      border-radius: 2px;
+    }
+  }
+}
+
+// ============================================================
+// Highlights / Strengths
+// ============================================================
+.highlights {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  li {
+    position: relative;
+    padding-left: var(--space-5);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-primary);
+
+    &::before {
+      content: '✦';
+      position: absolute;
+      left: 0;
+      color: var(--color-decoration);
+      font-size: var(--fs-xs);
+      top: 0.15em;
+    }
+  }
+}
+
+// ============================================================
+// Job expectation block
+// ============================================================
+.expectation {
+  &-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: var(--color-tag-bg);
+    color: var(--color-tag-text);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
+    padding: 2px var(--space-3);
+    border-radius: 999px;
+    margin-bottom: var(--space-2);
+  }
+
+  &-info {
+    font-size: var(--fs-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--lh-relaxed);
+  }
+}
+
+// ============================================================
+// Work & Project entries
+// ============================================================
+.entry {
+  margin-bottom: var(--space-5);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+  }
+
+  &-org {
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-primary);
+  }
+
+  &-dates {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  &-role {
+    font-size: var(--fs-sm);
+    color: var(--color-accent);
+    font-weight: var(--fw-medium);
+    margin-top: var(--space-1);
+  }
+
+  &-desc {
+    margin-top: var(--space-2);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-primary);
+  }
+
+  &-duties {
+    margin-top: var(--space-2);
+    list-style: none;
+
+    li {
+      position: relative;
+      padding-left: var(--space-4);
+      font-size: var(--fs-sm);
+      line-height: var(--lh-relaxed);
+      color: var(--color-text-primary);
+
+      &::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        color: var(--color-decoration-muted);
+        font-weight: var(--fw-bold);
+      }
+
+      ul {
+        list-style: none;
+        margin-top: var(--space-1);
+        margin-left: var(--space-4);
+
+        li {
+          font-size: var(--fs-xs);
+          line-height: var(--lh-relaxed);
+
+          &::before {
+            content: '◦';
+            color: var(--color-neutral-500);
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================================
+// Sidebar cards
+// ============================================================
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  &-card {
+    background: var(--color-neutral-50);
+    border-radius: var(--border-radius);
+    padding: var(--space-3);
+  }
+
+  &-title {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-heading);
+    margin-bottom: var(--space-2);
+    padding-bottom: var(--space-1);
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  &-text {
+    font-size: var(--fs-xs);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-secondary);
+  }
+}
+
+// ============================================================
+// Tags (skills, certs, etc.)
+// ============================================================
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.tag {
+  display: inline-block;
+  font-size: var(--fs-xs);
+  background: var(--color-tag-bg);
+  color: var(--color-tag-text);
+  padding: 2px var(--space-2);
+  border-radius: var(--border-radius);
+  white-space: nowrap;
+}
+
+// ============================================================
+// Print styles
+// ============================================================
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+  }
+
+  .resume-page {
+    box-shadow: none;
+    margin: 0;
+    page-break-after: always;
+
+    &:last-of-type {
+      page-break-after: auto;
+    }
+  }
+}
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+// ============================================================
+// Print preview mode (activated via ?print query param)
+// ============================================================
+body.print-preview {
+  background: #ffffff;
+  padding: 0;
+
+  .resume-page {
+    box-shadow: none;
+    margin: 0;
+    page-break-after: always;
+
+    &:last-of-type {
+      page-break-after: auto;
+    }
+  }
+}
+
+// ============================================================
+// Utility: prevent text clipping / ellipsis
+// ============================================================
+// All text containers should avoid overflow:hidden + text-overflow:ellipsis
+// so nothing is hidden. If a container must truncate, use explicit clipping.
+.no-clip {
+  overflow: visible !important;
+  white-space: normal !important;
+  text-overflow: clip !important;
+}
+
+// ============================================================
+// Compact second page (project experience)
+// ============================================================
+.entry--compact {
+  .entry-org {
+    font-size: var(--fs-base);
+  }
+  .entry-dates {
+    font-size: var(--fs-xs);
+  }
+  .entry-duties li {
+    font-size: var(--fs-xs);
+    line-height: var(--lh-tight);
+  }
+}
