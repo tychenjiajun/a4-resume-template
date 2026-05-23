@@ -40,12 +40,16 @@ $primary-base: #1B4F72 !default;   // Deep navy blue — financial/professional
   @return math.div($l2 + 0.05, $l1 + 0.05);
 }
 
-/// Pick black or white text for a given background, whichever has ≥ 4.5 contrast
+/// Pick dark or light text for a given background.
+/// Enforces semantic pairing: light bg → dark text, dark bg → light text.
+/// Uses luminance (not contrast) to decide which side the bg falls on.
 @function text-on($bg) {
-  @if contrast($bg, #ffffff) >= 4.5 {
-    @return #ffffff;
+  @if luminance($bg) > 0.4 {
+    // Light background → dark text
+    @return #1a1a1a;
   }
-  @return #1a1a1a;
+  // Dark background → light text
+  @return #ffffff;
 }
 
 /// Generate equally-spaced tint → shade ramp (10 stops, 50–900)
@@ -142,13 +146,13 @@ $primary-base: #1B4F72 !default;   // Deep navy blue — financial/professional
 }
 
 /// Select the best TEXT shade to pair with a given BACKGROUND shade.
-/// Returns the shade number for text color.
+/// Enforces semantic pairing: light shades (50-400) → dark text (900),
+/// dark shades (500-900) → light text (50).
 @function select-text-for-bg($palette, $bg-shade) {
-  $bg-color: map.get($palette, $bg-shade);
-  @if contrast($bg-color, #ffffff) >= 4.5 {
-    @return 50; // Use lightest (closest to white)
+  @if $bg-shade <= 400 {
+    @return 900; // Light bg → dark text
   }
-  @return 900; // Use darkest (closest to black)
+  @return 50;   // Dark bg → light text
 }
 
 /// Get the actual color value for text on a given background shade.
