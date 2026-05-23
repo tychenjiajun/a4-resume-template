@@ -1,7 +1,11 @@
 {
   "name": "a4-resume-template",
   "version": "1.0.0",
-  "description": "Printable A4 resume/CV template with SCSS theming, automatic color palette generation, WCAG AA a11y compliance, and Playwright integration tests",
+  "description": "Printable A4 resume/CV template with SCSS theming, automatic color palette generation, WCAG AA a11y compliance, Playwright integration tests, and AI agent skill",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tychenjiajun/a4-resume-template.git"
+  },
   "type": "module",
   "scripts": {
     "build:css": "sass styles/theme.scss styles/theme.css --no-source-map",
@@ -21,7 +25,9 @@
     "wcag",
     "scss",
     "playwright",
-    "accessibility"
+    "accessibility",
+    "agent-skill",
+    "ai-agent"
   ],
   "author": "Jiajun Chen <tychenjiajun@live.cn> (https://github.com/tychenjiajun)",
   "license": "MIT",

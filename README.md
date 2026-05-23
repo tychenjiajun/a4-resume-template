@@ -1,35 +1,39 @@
 # A4 Resume Template
 
-A printable A4 resume template with SCSS theming, automatic color palette generation, and a11y-compliant contrast ratios.
+A printable 1–3 page A4 resume template with SCSS theming, automatic color palette generation, a11y-compliant contrast ratios, and an AI agent skill for automatic resume generation.
 
 ## Features
 
 - **A4 Print-ready**: Exact 210mm × 297mm page size with proper `@page` and `@media print` styles
-- **SCSS Color Palette**: Automatically generates a full color system from a single base color
+- **Flexible Layout**: 1–3 pages with composable CSS classes — adapt sections to fit your content
+- **SCSS Color Palette**: Automatically generates a full 10-shade color system from a single base color
 - **A11y Compliant**: Compile-time SCSS checks + runtime axe-core scans ensure WCAG AA compliance
 - **Smart Shade Selection**: Auto-selects optimal shades for each use case based on contrast requirements
-- **Print Preview Mode**: Visit `?print` query parameter to preview print styles on screen
+- **Print Preview Mode**: Add `?print` query parameter to preview print styles on screen
 - **Integration Tests**: Playwright tests verify layout, ellipsis detection, and accessibility
-- **Agent Skill**: Built-in skill for AI agents to generate resumes from user experience data
+- **Agent Skill**: Built-in skill for AI coding agents to interview users and generate verified resumes
 
 ## Agent Skill
 
-This project includes a skill for AI coding agents to generate resumes:
+This project includes a skill for AI coding agents to generate resumes conversationally:
 
 ```
-skills/resume-builder/SKILL.md
+skills/resume-builder/
+├── SKILL.md       # Agent workflow: interview → theme → verify → handoff
+└── REFERENCE.md   # CSS class toolkit, question templates, color heuristics
 ```
 
-**Usage:** `make resume based on my experience <content>`
+**Usage:** `make a resume based on my experience`
 
-The skill guides agents through:
-1. Clone & install project
-2. Choose theme color based on industry/tone
-3. Write HTML with user's experience data
-4. Run tests to verify layout & accessibility
-5. Preview and print for user
+The skill guides agents through an interactive process:
+1. Detect or clone the project, install dependencies
+2. Read `index.html` as the starting template — agents can freely add, remove, or reorder sections
+3. Interview the user section-by-section (priority-first: Experience → Skills → Summary → Header → Education → Projects)
+4. Select a theme color based on user's industry and tone
+5. Run tests to verify layout, accessibility, and visual output
+6. Start dev server for live preview and PDF export
 
-See [skills/resume-builder/SKILL.md](skills/resume-builder/SKILL.md) for full workflow.
+See [skills/resume-builder/SKILL.md](skills/resume-builder/SKILL.md) for the full agent workflow and [skills/resume-builder/REFERENCE.md](skills/resume-builder/REFERENCE.md) for the CSS class toolkit.
 
 ## Quick Start
 
@@ -37,7 +41,7 @@ See [skills/resume-builder/SKILL.md](skills/resume-builder/SKILL.md) for full wo
 # Install dependencies
 pnpm install
 
-# Compile SCSS to CSS (if needed)
+# Compile SCSS to CSS (only needed if you changed the theme color)
 pnpm build:css
 
 # Start local dev server
@@ -50,7 +54,7 @@ pnpm dev
 ## Testing
 
 ```bash
-# Run all tests
+# Run all tests (17 tests)
 pnpm test
 
 # Run only a11y tests
@@ -62,6 +66,9 @@ pnpm test -- tests/resume.spec.ts
 # Run only screenshot tests
 pnpm test -- tests/screenshots.spec.ts
 
+# Update screenshot baselines after visual changes
+pnpm test -- --update-snapshots
+
 # Run tests with UI
 pnpm test:ui
 
@@ -69,46 +76,7 @@ pnpm test:ui
 pnpm test:debug
 ```
 
-## Commit Workflow
-
-This project uses [Conventional Commits](https://www.conventionalcommits.org/) for consistent commit messages.
-
-### Commit Message Format
-
-```<type>: <description>
-
-[optional body]
-[optional footer(s)]
-```bash
-
-**Types:**
-- `feat:` New feature
-- `fix:` Bug fix  
-- `docs:` Documentation changes
-- `style:` Code style changes (formatting, etc.)
-- `refactor:` Code refactoring
-- `test:` Test additions or modifications
-- `chore:` Build process or auxiliary tool changes
-
-### Examples
-
-```bash
-# Add new feature
-git commit -m "feat: add print preview mode with ?print query param"
-
-# Fix bug
-git commit -m "fix: prevent text truncation in sidebar sections"
-
-# Update tests
-git commit -m "test: add accessibility scans with axe-core"
-
-# Documentation
-git commit -m "docs: update README with usage examples"
-```
-
-Commitlint will automatically validate your commit messages via Husky hooks.
-
-### Test Coverage
+## Test Coverage
 
 **Layout Tests** (`tests/resume.spec.ts`):
 - ✅ No text truncated by ellipsis (normal view)
@@ -133,17 +101,32 @@ Commitlint will automatically validate your commit messages via Husky hooks.
 - ✅ Full document screenshot (normal view)
 - ✅ Full document screenshot (print preview)
 
-Screenshots are saved to `screenshots/` and attached to test results.
-Axe-core scan results are attached as JSON to each a11y test for debugging.
+Screenshots are saved to `screenshots/` and attached to test results. Axe-core scan results are attached as JSON to each a11y test for debugging.
+
+## Commit Workflow
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/). Commitlint validates messages via Husky hooks.
+
+**Types:** `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `test:`, `chore:`
+
+```bash
+git commit -m "feat: add print preview mode with ?print query param"
+git commit -m "fix: prevent text truncation in sidebar sections"
+git commit -m "docs: update README with agent skill details"
+```
 
 ## Theming
 
 ### Change Base Color
 
-Edit `styles/_palette.scss` and modify the `$primary-base` variable:
+Edit `styles/_palette.scss` and modify the `$primary-base` variable, then recompile:
 
 ```scss
 $primary-base: #1B4F72 !default;   // Change this to re-theme
+```
+
+```bash
+pnpm build:css
 ```
 
 The palette generator will:
@@ -151,7 +134,7 @@ The palette generator will:
 2. Generate neutral gray ramp
 3. Auto-calculate text colors for each background
 4. **Smart-select optimal shades** for each use case
-5. Verify all combinations meet WCAG AA contrast at compile time
+5. Verify all combinations meet WCAG AA contrast — compile will fail if any check fails
 
 ### Smart Shade Selection
 
@@ -171,15 +154,15 @@ All selections are verified at compile-time to meet 4.5:1 contrast requirements.
 ```css
 /* Primary palette */
 var(--color-primary-50) through var(--color-primary-900)
-var(--color-primary-{shades}-on) /* Auto-calculated text color */
+var(--color-primary-{shade}-on) /* Auto-calculated text color */
 
 /* Semantic colors (auto-selected) */
-var(--color-heading)      /* Best shade for headings */
-var(--color-accent)       /* Best shade for accents */
-var(--color-tag-bg)       /* Optimal light background */
-var(--color-tag-text)     /* Contrasting text for tags */
-var(--color-decoration)   /* For bullets, accents */
-var(--color-decoration-muted) /* Subtle decorative elements */
+var(--color-heading)              /* Best shade for headings */
+var(--color-accent)               /* Best shade for accents */
+var(--color-tag-bg)               /* Optimal light background */
+var(--color-tag-text)             /* Contrasting text for tags */
+var(--color-decoration)           /* For bullets, accents */
+var(--color-decoration-muted)     /* Subtle decorative elements */
 
 /* Neutral palette */
 var(--color-neutral-50) through var(--color-neutral-900)
@@ -188,29 +171,48 @@ var(--color-text-primary), var(--color-text-secondary), var(--color-text-muted)
 var(--color-border), var(--color-divider)
 ```
 
+## CSS Classes
+
+The template provides composable CSS classes. Read `index.html` for the current layout, then freely compose these classes to build 1–3 page resumes:
+
+| Category | Classes |
+|----------|---------|
+| **Page & Layout** | `.resume-page`, `.resume-grid`, `.resume-header`, `.resume-main`, `.resume-sidebar` |
+| **Header** | `.header`, `.header-name`, `.header-meta`, `.header-contact` |
+| **Sections** | `.section`, `.section-title`, `.summary-text` |
+| **Entries** | `.entry`, `.entry--compact`, `.entry-header`, `.entry-org`, `.entry-dates`, `.entry-role`, `.entry-desc`, `.entry-duties` |
+| **Sidebar** | `.sidebar`, `.sidebar-card`, `.sidebar-title`, `.sidebar-text` |
+| **Tags** | `.tags`, `.tag` |
+| **Optional** | `.highlights`, `.expectation-status`, `.expectation-info` |
+| **Utility** | `.no-clip`, `.print-preview` |
+
+Full class reference: [skills/resume-builder/REFERENCE.md](skills/resume-builder/REFERENCE.md)
+
 ## File Structure
 
 ```
 a4-resume-template/
-├── index.html              # Resume template (2 A4 pages)
+├── index.html                 # Resume content (starting template)
+├── AGENTS.md                  # Agent instructions for AI coding assistants
 ├── package.json
-├── playwright.config.js    # Playwright test configuration
-├── commitlint.config.js    # Conventional commits config
+├── playwright.config.js       # Playwright test configuration
+├── commitlint.config.js       # Conventional commits config
 ├── styles/
-│   ├── _palette.scss       # Color palette generator with a11y checks
-│   ├── theme.scss          # Main theme styles
-│   └── theme.css           # Compiled CSS
+│   ├── _palette.scss          # Color palette generator with a11y checks
+│   ├── theme.scss             # Layout, typography, components, print styles
+│   └── theme.css              # Compiled CSS (gitignored)
 ├── scripts/
-│   └── main.js             # ?print query param handler
+│   └── main.js                # ?print query param handler
 ├── skills/
 │   └── resume-builder/
-│       └── SKILL.md        # Agent skill for resume generation
+│       ├── SKILL.md           # Agent skill workflow
+│       └── REFERENCE.md       # CSS class toolkit, interview templates, color heuristics
 └── tests/
-    ├── axe-test.ts         # Shared axe fixture for a11y tests
-    ├── a11y.spec.ts        # Accessibility tests (axe-core)
-    ├── resume.spec.ts      # Layout & integration tests
-    └── screenshots.spec.ts  # Per-page screenshot capture
-└── screenshots/            # Generated PNG screenshots (gitignored)
+    ├── axe-test.ts            # Shared axe fixture for a11y tests
+    ├── a11y.spec.ts           # Accessibility tests (axe-core)
+    ├── resume.spec.ts         # Layout & integration tests
+    └── screenshots.spec.ts    # Per-page screenshot capture
+└── screenshots/               # Generated PNG screenshots (gitignored)
 ```
 
 ## Customization
@@ -233,22 +235,26 @@ Edit `index.html` to add your information:
 
 ### Sections
 
-The template includes:
+Available sections (add or remove as needed):
 - **Header**: Name, contact info, metadata
-- **Professional Summary**: Brief overview
-- **Work Experience**: Job entries with responsibilities
-- **Projects**: Notable projects with descriptions
+- **Professional Summary**: Brief career overview
+- **Work Experience**: Job entries with quantified achievements
+- **Highlights**: Key strengths or accomplishments
 - **Sidebar**: Education, Skills, Certifications, Languages
+- **Projects**: Notable projects (page 2+)
+- **Additional Information**: Publications, awards, volunteer work, interests
 
-Add or remove sections as needed following the existing structure.
+### Page Count
+
+The template supports 1–3 A4 pages. Each `.resume-page` div represents one page. Add or remove pages to match your content length. The CSS automatically handles page breaks for printing.
 
 ## Print Instructions
 
-1. Open `http://localhost:3000` in browser
-2. Press `Cmd+P` (Mac) or `Ctrl+P` (Windows)
-3. Select "Save as PDF" or your printer
-4. Ensure "Background graphics" is enabled
-5. Margins should be set to "None" (controlled by CSS)
+1. Open `http://localhost:3000` (normal) or `http://localhost:3000/?print` (print preview)
+2. Press `Cmd+P` (Mac) or `Ctrl+P` (Windows/Linux)
+3. Select "Save as PDF" or printer
+4. Enable "Background graphics"
+5. Set margins to "None" (CSS handles margins)
 
 ## Browser Support
 
