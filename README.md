@@ -49,6 +49,45 @@ pnpm test:ui
 pnpm test:debug
 ```
 
+## Commit Workflow
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) for consistent commit messages.
+
+### Commit Message Format
+
+```<type>: <description>
+
+[optional body]
+[optional footer(s)]
+```bash
+
+**Types:**
+- `feat:` New feature
+- `fix:` Bug fix  
+- `docs:` Documentation changes
+- `style:` Code style changes (formatting, etc.)
+- `refactor:` Code refactoring
+- `test:` Test additions or modifications
+- `chore:` Build process or auxiliary tool changes
+
+### Examples
+
+```bash
+# Add new feature
+git commit -m "feat: add print preview mode with ?print query param"
+
+# Fix bug
+git commit -m "fix: prevent text truncation in sidebar sections"
+
+# Update tests
+git commit -m "test: add accessibility scans with axe-core"
+
+# Documentation
+git commit -m "docs: update README with usage examples"
+```
+
+Commitlint will automatically validate your commit messages via Husky hooks.
+
 ### Test Coverage
 
 **Layout Tests** (`tests/resume.spec.ts`):
