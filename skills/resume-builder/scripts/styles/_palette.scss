@@ -110,46 +110,28 @@ $primary-base: #1B4F72 !default;   // Deep navy blue — financial/professional
 }
 
 /// Select the best shade for a BACKGROUND that will have DARK text on it.
-/// Tries shades from lightest until we find one where dark text has ≥ $min contrast.
-/// Returns the shade number.
+/// Iterates dark→light (e.g. 400→50), returning the darkest shade that still
+/// meets $min contrast — most saturated/visible while staying accessible.
 @function select-bg-shade($palette, $start: 50, $end: 300, $min: 4.5) {
   $shades: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900);
   $start-idx: list.index($shades, $start);
   $end-idx: list.index($shades, $end);
 
-  @for $i from $start-idx through $end-idx {
+  @for $i from $end-idx through $start-idx {
     $shade: list.nth($shades, $i);
     $color: map.get($palette, $shade);
     @if contrast($color, #1a1a1a) >= $min {
       @return $shade;
     }
   }
-  // Fallback to lightest if none meet requirement (will use white text instead)
+  // Fallback to lightest if none meet requirement
   @return $start;
 }
 
 /// Select the best shade for a BACKGROUND that will have WHITE text on it.
-/// Tries shades from darkest until we find one where white text has ≥ $min contrast.
-/// Returns the shade number.
-@function select-bg-shade-light($palette, $start: 900, $end: 500, $min: 4.5) {
-  $shades: (900, 800, 700, 600, 500, 400, 300, 200, 100, 50);
-  $start-idx: list.index($shades, $start);
-  $end-idx: list.index($shades, $end);
-
-  @for $i from $start-idx through $end-idx {
-    $shade: list.nth($shades, $i);
-    $color: map.get($palette, $shade);
-    @if contrast($color, #ffffff) >= $min {
-      @return $shade;
-    }
-  }
-  // Fallback to darkest
-  @return $start;
-}
-
-/// Like select-bg-shade-light but searches light→dark, returning the LIGHTEST
-/// shade that still meets $min contrast with white text.
-@function select-bg-shade-light-lightest($palette, $start: 500, $end: 900, $min: 4.5) {
+/// Iterates light→dark (e.g. 500→900), returning the lightest shade that still
+/// meets $min contrast — softer dark bg while staying accessible.
+@function select-bg-shade-light($palette, $start: 500, $end: 900, $min: 4.5) {
   $shades: (500, 600, 700, 800, 900);
   $start-idx: list.index($shades, $start);
   $end-idx: list.index($shades, $end);
@@ -189,10 +171,10 @@ $neutral:   neutral-ramp();
 $text-on-light: select-text-shade($primary, 500, 900, 7);             // Headings, accents on white (AAA 7:1)
 $bg-with-dark-text: select-bg-shade($primary, 50, 400);               // Light backgrounds (AA 4.5:1)
 $bg-with-dark-text-aaa: select-bg-shade($primary, 50, 400, 7);        // Light backgrounds (AAA 7:1)
-$bg-with-light-text: select-bg-shade-light($primary, 900, 500);       // Dark backgrounds with white text
+$bg-with-light-text: select-bg-shade-light($primary, 500, 900);       // Dark backgrounds with white text (AA 4.5:1)
 
 // Tag colors: lightest dark shade that still meets AAA 7:1 with white text
-$tag-bg-shade: select-bg-shade-light-lightest($primary, 500, 900, 7);
+$tag-bg-shade: select-bg-shade-light($primary, 500, 900, 7);
 
 // ============================================================
 // Export CSS custom properties with auto-selected colors
