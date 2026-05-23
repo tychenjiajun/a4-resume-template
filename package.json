@@ -24,7 +24,7 @@
     "accessibility"
   ],
   "author": "Jiajun Chen <tychenjiajun@live.cn> (https://github.com/tychenjiajun)",
-  "license": "ISC",
+  "license": "MIT",
   "devEngines": {
     "packageManager": {
       "name": "pnpm",

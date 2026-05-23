@@ -258,4 +258,4 @@ Add or remove sections as needed following the existing structure.
 
 ## License
 
-ISC
+MIT
