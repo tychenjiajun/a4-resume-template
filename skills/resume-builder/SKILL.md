@@ -85,11 +85,18 @@ Screenshots are saved to `screenshots/`. If you have vision, inspect them for:
 - No orphaned content
 - Readable font sizes at print scale
 
-Start the dev server:
+Start the dev server and verify it's responding:
 
 ```bash
-pnpm dev
+pnpm dev &
+for i in 1 2 3 4 5; do
+  curl -sf http://localhost:3000 > /dev/null && break
+  sleep 1
+done
+curl -sf http://localhost:3000 > /dev/null && echo "✓ Server is up" || echo "✗ Server failed to start"
 ```
+
+If the curl fails after retries, check for port conflicts.
 
 Tell the user:
 - **Live preview**: `http://localhost:3000` (normal) or `http://localhost:3000/?print` (print preview)
