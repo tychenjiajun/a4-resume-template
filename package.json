@@ -1,7 +1,7 @@
 {
   "name": "a4-resume-template",
   "version": "1.0.0",
-  "description": "Printable A4 resume template with SCSS theming and a11y-compliant color palette",
+  "description": "Printable A4 resume/CV template with SCSS theming, automatic color palette generation, WCAG AA a11y compliance, and Playwright integration tests",
   "type": "module",
   "scripts": {
     "build:css": "sass styles/theme.scss styles/theme.css --no-source-map",
@@ -17,9 +17,13 @@
     "a4",
     "printable",
     "template",
-    "a11y"
+    "a11y",
+    "wcag",
+    "scss",
+    "playwright",
+    "accessibility"
   ],
-  "author": "",
+  "author": "Jiajun Chen <tychenjiajun@live.cn> (https://github.com/tychenjiajun)",
   "license": "ISC",
   "devEngines": {
     "packageManager": {

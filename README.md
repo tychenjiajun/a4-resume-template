@@ -10,6 +10,26 @@ A printable A4 resume template with SCSS theming, automatic color palette genera
 - **Smart Shade Selection**: Auto-selects optimal shades for each use case based on contrast requirements
 - **Print Preview Mode**: Visit `?print` query parameter to preview print styles on screen
 - **Integration Tests**: Playwright tests verify layout, ellipsis detection, and accessibility
+- **Agent Skill**: Built-in skill for AI agents to generate resumes from user experience data
+
+## Agent Skill
+
+This project includes a skill for AI coding agents to generate resumes:
+
+```
+skills/resume-builder/SKILL.md
+```
+
+**Usage:** `make resume based on my experience <content>`
+
+The skill guides agents through:
+1. Clone & install project
+2. Choose theme color based on industry/tone
+3. Write HTML with user's experience data
+4. Run tests to verify layout & accessibility
+5. Preview and print for user
+
+See [skills/resume-builder/SKILL.md](skills/resume-builder/SKILL.md) for full workflow.
 
 ## Quick Start
 
@@ -175,12 +195,16 @@ a4-resume-template/
 ├── index.html              # Resume template (2 A4 pages)
 ├── package.json
 ├── playwright.config.js    # Playwright test configuration
+├── commitlint.config.js    # Conventional commits config
 ├── styles/
 │   ├── _palette.scss       # Color palette generator with a11y checks
 │   ├── theme.scss          # Main theme styles
 │   └── theme.css           # Compiled CSS
 ├── scripts/
 │   └── main.js             # ?print query param handler
+├── skills/
+│   └── resume-builder/
+│       └── SKILL.md        # Agent skill for resume generation
 └── tests/
     ├── axe-test.ts         # Shared axe fixture for a11y tests
     ├── a11y.spec.ts        # Accessibility tests (axe-core)
