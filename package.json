@@ -12,8 +12,7 @@
     "dev": "serve . -l 3000",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
-    "test:debug": "playwright test --debug",
-    "prepare": "husky"
+    "test:debug": "playwright test --debug"
   },
   "keywords": [
     "resume",
@@ -40,10 +39,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
-    "@commitlint/cli": "^21.0.1",
-    "@commitlint/config-conventional": "^21.0.1",
     "@playwright/test": "^1.60.0",
-    "husky": "^9.1.7",
     "sass": "^1.100.0",
     "serve": "^14.2.6"
   }

@@ -103,18 +103,6 @@ pnpm test:debug
 
 截图保存至 `screenshots/` 目录并附加到测试结果中。每次无障碍测试的 axe-core 扫描结果以 JSON 格式附加，便于调试。
 
-## 提交规范
-
-本项目使用 [约定式提交](https://www.conventionalcommits.org/zh-hans/)。Commitlint 通过 Husky 钩子验证提交信息。
-
-**类型：** `feat:`（新功能）、`fix:`（修复）、`docs:`（文档）、`style:`（样式）、`refactor:`（重构）、`test:`（测试）、`chore:`（构建/工具）
-
-```bash
-git commit -m "feat: 添加 ?print 参数打印预览模式"
-git commit -m "fix: 修复侧边栏文本截断问题"
-git commit -m "docs: 更新 README 添加 Agent 技能说明"
-```
-
 ## 主题定制
 
 ### 更换基色
@@ -196,7 +184,7 @@ a4-resume-template/
 ├── AGENTS.md                  # AI 编程助手指令
 ├── package.json
 ├── playwright.config.js       # Playwright 测试配置
-├── commitlint.config.js       # 约定式提交配置
+
 ├── styles/
 │   ├── _palette.scss          # 配色方案生成器（含无障碍检查）
 │   ├── theme.scss             # 布局、排版、组件、打印样式

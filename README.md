@@ -103,18 +103,6 @@ pnpm test:debug
 
 Screenshots are saved to `screenshots/` and attached to test results. Axe-core scan results are attached as JSON to each a11y test for debugging.
 
-## Commit Workflow
-
-This project uses [Conventional Commits](https://www.conventionalcommits.org/). Commitlint validates messages via Husky hooks.
-
-**Types:** `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `test:`, `chore:`
-
-```bash
-git commit -m "feat: add print preview mode with ?print query param"
-git commit -m "fix: prevent text truncation in sidebar sections"
-git commit -m "docs: update README with agent skill details"
-```
-
 ## Theming
 
 ### Change Base Color
@@ -196,7 +184,7 @@ a4-resume-template/
 ├── AGENTS.md                  # Agent instructions for AI coding assistants
 ├── package.json
 ├── playwright.config.js       # Playwright test configuration
-├── commitlint.config.js       # Conventional commits config
+
 ├── styles/
 │   ├── _palette.scss          # Color palette generator with a11y checks
 │   ├── theme.scss             # Layout, typography, components, print styles

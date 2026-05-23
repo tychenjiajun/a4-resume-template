@@ -22,7 +22,6 @@
 | CSS class toolkit | `skills/resume-builder/REFERENCE.md` |
 
 ## Key Conventions
-- Commit messages follow Conventional Commits (`feat:`, `fix:`, `docs:`, etc.) — enforced by commitlint via Husky
 - Edit `$primary-base` in `styles/_palette.scss` to re-theme, then run `pnpm build:css`
 - Do not edit `styles/theme.css` directly — it is compiled from `theme.scss`
 - Test server starts automatically via Playwright webServer config
