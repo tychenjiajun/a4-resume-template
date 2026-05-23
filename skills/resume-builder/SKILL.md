@@ -25,7 +25,7 @@ Help the user know themselves and the target job. Explore these angles — adapt
 
 **Sections** — after exploring each area, edit `index.html` directly. Common sections: header, summary, work experience, skills, education, certs, languages, projects. Add, remove, or reorder freely.
 
-Start from `index.html` — it's a template, not a contract. See [REFERENCE.md](REFERENCE.md) for CSS classes.
+Start from `index.html` — it's a template, not a contract. You can freely edit anything: add/remove sections, tweak the SCSS in `styles/`, adjust font sizes and spacing in `theme.scss`, restructure the grid layout, or modify the color palette. The only constraint is to follow the workflow (build → theme → verify → preview). See [REFERENCE.md](REFERENCE.md) for CSS classes.
 
 ### 2. Theme
 
