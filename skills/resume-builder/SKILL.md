@@ -9,7 +9,7 @@ description: Interview users to build printable A4 resumes with SCSS theming and
 
 ```bash
 cd <skill-dir>    # directory containing this SKILL.md
-pnpm install
+npm install
 npx playwright install chromium
 ```
 
@@ -32,7 +32,7 @@ Start from `index.html` — it's a template, not a contract. See [REFERENCE.md](
 Edit `$primary-base` in `styles/_palette.scss`, then:
 
 ```bash
-pnpm build:css
+npm run build:css
 ```
 
 Pick any hex color — the compiler auto-generates a full palette and rejects combinations that fail contrast requirements. If it errors, try a darker or more saturated variant.
@@ -43,12 +43,12 @@ Tests run inside `scripts/`:
 
 ```bash
 cd scripts
-pnpm test                      # all tests
-pnpm test -- tests/resume.spec.ts       # layout only
-pnpm test -- tests/a11y.spec.ts         # a11y only
-pnpm test -- tests/screenshots.spec.ts  # screenshots only
-pnpm test -- tests/overflow.spec.ts     # overflow only
-pnpm test -- tests/blank-space.spec.ts  # blank space only
+npm test                      # all tests
+npm test -- tests/resume.spec.ts       # layout only
+npm test -- tests/a11y.spec.ts         # a11y only
+npm test -- tests/screenshots.spec.ts  # screenshots only
+npm test -- tests/overflow.spec.ts     # overflow only
+npm test -- tests/blank-space.spec.ts  # blank space only
 ```
 
 Tests check for layout issues (overflow, truncation, blank space), accessibility, and visual output.
@@ -56,7 +56,7 @@ Tests check for layout issues (overflow, truncation, blank space), accessibility
 ### 4. Preview
 
 ```bash
-pnpm dev
+npm run dev
 ```
 
 - Normal: `http://localhost:3000`

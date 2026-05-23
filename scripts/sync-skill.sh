@@ -15,7 +15,6 @@ sync_to() {
 
   cp "$PROJECT_ROOT/package.json" "$dest/"
   cp "$PROJECT_ROOT/playwright.config.js" "$dest/"
-  cp "$PROJECT_ROOT/pnpm-workspace.yaml" "$dest/"
   cp "$PROJECT_ROOT/.gitignore" "$dest/"
 
   mkdir -p "$dest/styles" "$dest/scripts" "$dest/tests"

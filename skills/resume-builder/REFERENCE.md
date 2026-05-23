@@ -65,11 +65,11 @@ Read `index.html` for the current structure. Mix and match these classes — you
 
 | Task | Command |
 |------|---------|
-| Install | `pnpm install` |
-| Compile SCSS | `pnpm build:css` |
-| Dev server | `pnpm dev` |
-| Run tests | `pnpm test` |
-| Update screenshots | `pnpm test -- --update-snapshots` |
+| Install | `npm install` |
+| Compile SCSS | `npm run build:css` |
+| Dev server | `npm run dev` |
+| Run tests | `npm test` |
+| Update screenshots | `npm test -- --update-snapshots` |
 
 ## Theming
 

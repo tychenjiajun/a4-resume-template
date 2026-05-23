@@ -147,6 +147,24 @@ $primary-base: #1B4F72 !default;   // Deep navy blue — financial/professional
   @return $start;
 }
 
+/// Like select-bg-shade-light but searches light→dark, returning the LIGHTEST
+/// shade that still meets $min contrast with white text.
+@function select-bg-shade-light-lightest($palette, $start: 500, $end: 900, $min: 4.5) {
+  $shades: (500, 600, 700, 800, 900);
+  $start-idx: list.index($shades, $start);
+  $end-idx: list.index($shades, $end);
+
+  @for $i from $start-idx through $end-idx {
+    $shade: list.nth($shades, $i);
+    $color: map.get($palette, $shade);
+    @if contrast($color, #ffffff) >= $min {
+      @return $shade;
+    }
+  }
+  // Fallback to darkest
+  @return $end;
+}
+
 /// Select the best TEXT shade to pair with a given BACKGROUND shade.
 /// Enforces semantic pairing: light shades (50-400) → dark text (900),
 /// dark shades (500-900) → light text (50).
@@ -173,8 +191,8 @@ $bg-with-dark-text: select-bg-shade($primary, 50, 400);               // Light b
 $bg-with-dark-text-aaa: select-bg-shade($primary, 50, 400, 7);        // Light backgrounds (AAA 7:1)
 $bg-with-light-text: select-bg-shade-light($primary, 900, 500);       // Dark backgrounds with white text
 
-// Tag colors: light primary bg with auto text — subtle, high readability
-$tag-bg-shade: select-bg-shade($primary, 100, 400, 4.5);
+// Tag colors: lightest dark shade that still meets AAA 7:1 with white text
+$tag-bg-shade: select-bg-shade-light-lightest($primary, 500, 900, 7);
 
 // ============================================================
 // Export CSS custom properties with auto-selected colors
@@ -292,10 +310,10 @@ $tag-bg-shade: select-bg-shade($primary, 100, 400, 4.5);
 // Heading / accent on surface (sidebar titles on neutral-50 cards)
 @include a11y-check(map.get($neutral, 50), map.get($primary, $text-on-light), 7);
 
-// Tag text on tag bg — small text, AA threshold = 4.5:1 (tags are decorative)
+// Tag text on tag bg — small text, AAA threshold = 7:1
 $tag-bg-color: map.get($primary, $tag-bg-shade);
 $tag-text-color: text-on($tag-bg-color);
-@include a11y-check($tag-bg-color, $tag-text-color, 4.5);
+@include a11y-check($tag-bg-color, $tag-text-color, 7);
 
 // Body text on surface — normal text, AAA threshold = 7:1
 @include a11y-check(map.get($neutral, 50), #1a1a1a, 7);
