@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Name - Resume</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/theme.css">
+</head>
+<body>
+  <!-- Page 1: Header, Summary, Experience, Sidebar -->
+  <div class="resume-page">
+    <div class="resume-grid">
+      <!-- Header spans full width -->
+      <header class="resume-header">
+        <div class="header">
+          <h1 class="header-name">Your Name</h1>
+          <div class="header-meta">
+            <span>Location</span>
+            <span>Years of Experience</span>
+            <span>Education Level</span>
+          </div>
+          <div class="header-contact">
+            <a href="tel:+1234567890">📞 +1 234 567 890</a>
+            <a href="mailto:your.email@example.com">✉️ your.email@example.com</a>
+            <a href="https://linkedin.com/in/yourprofile">🔗 linkedin.com/in/yourprofile</a>
+            <a href="https://github.com/yourusername">🐙 github.com/yourusername</a>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main column -->
+      <main class="resume-main">
+        <!-- Professional Summary -->
+        <section class="section">
+          <h2 class="section-title">Professional Summary</h2>
+          <p class="summary-text">
+            Brief overview of your professional background, key skills, and career objectives.
+            Highlight your most relevant experience and what makes you stand out as a candidate.
+          </p>
+        </section>
+
+        <!-- Work Experience -->
+        <section class="section">
+          <h2 class="section-title">Work Experience</h2>
+
+          <article class="entry">
+            <div class="entry-header">
+              <h3 class="entry-org">Company Name</h3>
+              <time class="entry-dates">2020/01 – Present</time>
+            </div>
+            <p class="entry-role">Job Title</p>
+            <ul class="entry-duties">
+              <li>
+                <strong>Key responsibility or achievement</strong>
+                <ul>
+                  <li>Specific accomplishment or project detail</li>
+                  <li>Quantifiable impact or result</li>
+                  <li>Technology or methodology used</li>
+                </ul>
+              </li>
+              <li>
+                <strong>Another key responsibility</strong>
+                <ul>
+                  <li>Detail about your contribution</li>
+                  <li>Outcome or metric improved</li>
+                </ul>
+              </li>
+            </ul>
+          </article>
+
+          <article class="entry">
+            <div class="entry-header">
+              <h3 class="entry-org">Previous Company</h3>
+              <time class="entry-dates">2017/06 – 2019/12</time>
+            </div>
+            <p class="entry-role">Previous Job Title</p>
+            <div class="entry-desc">
+              <strong>Responsibilities:</strong> Brief description of your role and key achievements.
+            </div>
+          </article>
+        </section>
+      </main>
+
+      <!-- Sidebar -->
+      <aside class="resume-sidebar">
+        <div class="sidebar">
+          <!-- Education -->
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">Education</h3>
+            <div class="sidebar-text">
+              <strong>University Name</strong><br>
+              Degree · Field of Study<br>
+              2013/09 – 2017/06
+            </div>
+          </div>
+
+          <!-- Skills -->
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">Skills</h3>
+            <div class="tags">
+              <span class="tag">JavaScript</span>
+              <span class="tag">TypeScript</span>
+              <span class="tag">React</span>
+              <span class="tag">Vue.js</span>
+              <span class="tag">Node.js</span>
+              <span class="tag">CSS/SCSS</span>
+              <span class="tag">HTML5</span>
+              <span class="tag">Git</span>
+            </div>
+          </div>
+
+          <!-- Certifications -->
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">Certifications</h3>
+            <div class="tags">
+              <span class="tag">Certification Name</span>
+              <span class="tag">Another Certification</span>
+            </div>
+          </div>
+
+          <!-- Languages -->
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">Languages</h3>
+            <div class="sidebar-text">
+              <strong>English</strong> Professional proficiency<br>
+              <strong>Native Language</strong> Native
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Page 2: Projects, Additional Sections -->
+  <div class="resume-page">
+    <section class="section">
+      <h2 class="section-title">Projects</h2>
+
+      <article class="entry entry--compact">
+        <div class="entry-header">
+          <h3 class="entry-org">Project Name</h3>
+          <time class="entry-dates">2023/01 – Present</time>
+        </div>
+        <div class="entry-desc">
+          <strong>Description:</strong> Brief overview of the project and its purpose.<br>
+          <strong>Role:</strong> Your specific contribution and responsibilities.<br>
+          <strong>Technologies:</strong> Key technologies and tools used.<br>
+          <strong>Outcome:</strong> Results achieved or impact made.
+        </div>
+      </article>
+
+      <article class="entry entry--compact">
+        <div class="entry-header">
+          <h3 class="entry-org">Another Project</h3>
+          <time class="entry-dates">2022/06 – 2022/12</time>
+        </div>
+        <div class="entry-desc">
+          <strong>Description:</strong> What the project does and who it serves.<br>
+          <strong>Role:</strong> Your contributions and leadership.<br>
+          <strong>Technologies:</strong> Stack and frameworks utilized.<br>
+          <strong>Outcome:</strong> Metrics, user adoption, or business impact.
+        </div>
+      </article>
+    </section>
+
+    <!-- Optional: Additional sections like Publications, Awards, Volunteer Work -->
+    <section class="section">
+      <h2 class="section-title">Additional Information</h2>
+      <div class="entry-desc">
+        <strong>Publications:</strong> List any relevant publications or articles.<br>
+        <strong>Awards:</strong> Recognition or honors received.<br>
+        <strong>Volunteer Work:</strong> Community involvement or open source contributions.<br>
+        <strong>Interests:</strong> Professional interests or hobbies relevant to the role.
+      </div>
+    </section>
+  </div>
+
+  <script src="scripts/main.js"></script>
+</body>
+</html>
