@@ -53,6 +53,15 @@ npm test -- tests/blank-space.spec.ts  # blank space only
 
 Tests check for layout issues (overflow, truncation, blank space), accessibility, and visual output.
 
+**When tests fail after editing content** — update test expectations to match the new layout:
+
+- `resume.spec.ts` — update the section count (`toHaveLength(0)` for ellipsis, `toBeGreaterThanOrEqual(N)` for section count) to match your actual number of sections.
+- `blank-space.spec.ts` — adjust thresholds at the top (`MIN_PAGE1_USAGE_RATIO`, `MAX_BOTTOM_WHITESPACE_PX`, etc.) if your page is sparse or extra-dense. Run `npm test -- tests/blank-space.spec.ts` and read the logged metrics to calibrate.
+- `screenshots.spec.ts` — run `npm test -- tests/screenshots.spec.ts --update-snapshots` to refresh visual baselines.
+- `overflow.spec.ts` & `a11y.spec.ts` — should pass regardless; investigate any failures as real layout/accessibility bugs.
+
+Do not blindly lower thresholds — first check if the layout can be tightened. When the page is intentionally sparse (e.g., a short second page), relax thresholds to match reality.
+
 ### 4. Preview
 
 ```bash
