@@ -54,7 +54,7 @@ pnpm dev
 ## Testing
 
 ```bash
-# Run all tests (17 tests)
+# Run all tests (34 tests)
 pnpm test
 
 # Run only a11y tests
@@ -87,11 +87,26 @@ pnpm test:debug
 - ✅ Print preview class applied with `?print` query param
 - ✅ No print preview class without `?print`
 
+**Overflow Tests** (`tests/overflow.spec.ts`):
+- ✅ No horizontal overflow on any A4 page (normal view)
+- ✅ No vertical overflow on any A4 page (normal view)
+- ✅ No horizontal overflow on any A4 page (print preview)
+- ✅ No vertical overflow on any A4 page (print preview)
+- ✅ Each `.resume-page` is exactly 210mm × 297mm
+
+**Blank Space Tests** (`tests/blank-space.spec.ts`):
+- ✅ Page 1 uses ≥60% of available height, pages 2+ use ≥30%
+- ✅ Sidebar column ≥40% of main column height
+- ✅ Bottom whitespace ≤400px on well-filled pages
+- ✅ Pages 2+ start content within 100px of page top
+- ✅ No gaps >60px between adjacent sections
+- ✅ No sidebar cards <30% filled
+
 **Accessibility Tests** (`tests/a11y.spec.ts`):
-- ✅ No WCAG A/AA violations (full page, normal view)
-- ✅ No WCAG A/AA violations (full page, print preview)
-- ✅ No WCAG A/AA violations in header section
-- ✅ No WCAG A/AA violations in sidebar
+- ✅ No WCAG A/AA/AAA violations (full page, normal view)
+- ✅ No WCAG A/AA/AAA violations (full page, print preview)
+- ✅ No WCAG A/AA/AAA violations in header section
+- ✅ No WCAG A/AA/AAA violations in sidebar
 
 **Screenshot Tests** (`tests/screenshots.spec.ts`):
 - ✅ Page 1 screenshot (normal view)

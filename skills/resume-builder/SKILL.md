@@ -1,108 +1,56 @@
 ---
 name: resume-builder
-description: Build printable A4 resumes with SCSS theming, automatic color palettes, and WCAG AA a11y compliance. Use when user asks to "make resume", "create CV", "build resume based on my experience", or wants a printable resume with accessibility verification.
+description: Interview users to build printable A4 resumes with SCSS theming and automatic color palettes. Use when user asks to "make resume", "create CV", or wants a printable resume.
 ---
 
 # Resume Builder
 
-Interview the user to build a 1–3 page A4 resume, then verify with automated tests.
-
-## Quick Start
-
-Typical usage: `make a resume based on my experience`
-
-## Workflow
-
-### 1. Setup
-
-The `scripts/` directory alongside this SKILL.md is a self-contained project. `cd` into it and install:
+## Setup
 
 ```bash
-cd <skill-dir>/scripts
+cd <skill-dir>    # directory containing this SKILL.md
 pnpm install
 npx playwright install chromium
 ```
 
-`<skill-dir>` is the directory containing this SKILL.md. All subsequent commands (`pnpm build:css`, `pnpm test`, `pnpm dev`) run from there.
+## Workflow
 
-### 2. Read the Template
+### 1. Interview & build
 
-Read `index.html` — this is the starting point. It contains placeholder content with the project's HTML structure and CSS classes. You are **not** limited to this exact layout. Add, remove, or reorder sections, blocks, and classes to fit the user's needs. See [REFERENCE.md](REFERENCE.md) for the full CSS class toolkit and interview templates.
+Help the user know themselves and the target job. Explore these angles — adapt order and depth to what they already know:
 
-Key layout primitives:
-- `.resume-page` — each A4 page (1–3 of these)
-- `.resume-grid` + `.resume-main` + `.resume-sidebar` — two-column page 1 layout
-- `.entry` / `.entry--compact` — work experience or project entries
-- `.sidebar-card` / `.tags` / `.tag` — sidebar content and skill tags
-- `.highlights` / `.expectation-status` / `.section` — additional block types
+**The target:** role, company/industry, seniority, what the job actually needs (ask for the JD). Identify which of the user's experience maps to each requirement, and where the gaps are.
 
-### 3. Interview the User (Priority-first)
+**Their story:** what makes them different? Career pivots or connecting threads? Any red flags they're worried about? Pull threads until you find the narrative.
 
-Interview one section at a time. For each section, ask structured questions in order, adapt follow-ups based on responses. See [REFERENCE.md](REFERENCE.md) for full question templates.
+**Sections** — after exploring each area, edit `index.html` directly. Common sections: header, summary, work experience, skills, education, certs, languages, projects. Add, remove, or reorder freely.
 
-**Order:**
-1. **Work Experience** — most impactful; org, dates, title, 3–5 quantified bullet points per role
-2. **Skills** — language/framework/tool tags
-3. **Professional Summary** — synthesize from experience above
-4. **Header** — name, location, contact links, years of experience
-5. **Education, Certifications, Languages** — quick rounds
-6. **Projects** — page 2+ content (skip if ≤1 page)
+Start from `index.html` — it's a template, not a contract. See [REFERENCE.md](REFERENCE.md) for CSS classes.
 
-After each section, edit `index.html` with the user's answers. Offer multiple-choice options where sensible (e.g., resume tone, tag groupings).
+### 2. Theme
 
-### 4. Choose Theme
-
-Analyze the user's industry, role, and tone. Select a base hex color using the heuristics in [REFERENCE.md](REFERENCE.md#color-selection-heuristics), or match their brand/company color. Edit `$primary-base` in `styles/_palette.scss`, then:
+Edit `$primary-base` in `styles/_palette.scss`, then:
 
 ```bash
 pnpm build:css
 ```
 
-The SCSS compiler will error if any color combination fails WCAG AA (4.5:1 contrast) — this is the safety net. If compilation fails, pick a darker or more saturated variant and retry.
+Pick any hex color — the compiler auto-generates a full palette and rejects combinations that fail contrast requirements. If it errors, try a darker or more saturated variant.
 
-### 5. Verify
+### 3. Verify (optional)
 
 ```bash
 pnpm test
 ```
 
-**Test coverage:**
-- Ellipsis truncation detection (normal + print mode)
-- All sections visible, header + contact present
-- WCAG A/AA a11y violations (axe-core, 4 scan targets)
-- Screenshot capture (6 screenshots)
+Tests check for layout issues (overflow, truncation, blank space), accessibility, and visual output. Tests are suggestions — skip, modify, or ignore as needed.
 
-**On failure:**
-- **Auto-fix** without asking: missing sections, print-preview class, SCSS recompile, screenshot baselines
-- **Ask user** before changing: truncation fixes (reword or shorten), contrast adjustments (darker shade vs. lighter text), content rebalancing across pages
-
-Re-verify after fixes until green.
-
-### 6. Visual Review & Handoff
-
-Screenshots are saved to `screenshots/`. If you have vision, inspect them for:
-- Balanced columns and spacing
-- No orphaned content
-- Readable font sizes at print scale
-
-Start the dev server and verify it's responding:
+### 4. Preview
 
 ```bash
-pnpm dev &
-for i in 1 2 3 4 5; do
-  curl -sf http://localhost:3000 > /dev/null && break
-  sleep 1
-done
-curl -sf http://localhost:3000 > /dev/null && echo "✓ Server is up" || echo "✗ Server failed to start"
+pnpm dev
 ```
 
-If the curl fails after retries, check for port conflicts.
-
-Tell the user:
-- **Live preview**: `http://localhost:3000` (normal) or `http://localhost:3000/?print` (print preview)
-- **Save as PDF**: `Cmd+P` / `Ctrl+P` → "Save as PDF" → enable "Background graphics" → margins "None"
-- **Source file**: `index.html` (ready to edit or print)
-
-## Reference
-
-See [REFERENCE.md](REFERENCE.md) for CSS class toolkit, interview question templates, color selection details, and troubleshooting.
+- Normal: `http://localhost:3000`
+- Print preview: `http://localhost:3000/?print`
+- Save as PDF: `Cmd+P` → "Save as PDF" → enable "Background graphics" → margins "None"

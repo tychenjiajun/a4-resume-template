@@ -10,13 +10,13 @@ type AxeFixture = {
  * Extend Playwright test with a pre-configured AxeBuilder fixture.
  *
  * Common configuration:
- * - Tags: WCAG 2.x A + AA + 2.1 A + AA (matches Accessibility Insights automated checks)
- * - Exclude: elements with known issues that are acceptable for a print-focused resume
+ * - Tags: WCAG 2.x A + AA + AAA + 2.1 A + AA + AAA
+ *   AAA includes best-practice rules (not all are auto-detectable)
  */
 export const test = base.extend<AxeFixture>({
   makeAxeBuilder: async ({ page }, use) => {
     const makeAxeBuilder = () => new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']);
+      .withTags(['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag21aaa']);
 
     await use(makeAxeBuilder);
   },
