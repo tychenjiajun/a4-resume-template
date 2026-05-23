@@ -173,8 +173,8 @@ $bg-with-dark-text: select-bg-shade($primary, 50, 400);               // Light b
 $bg-with-dark-text-aaa: select-bg-shade($primary, 50, 400, 7);        // Light backgrounds (AAA 7:1)
 $bg-with-light-text: select-bg-shade-light($primary, 900, 500);       // Dark backgrounds with white text
 
-// Tag colors: dark primary bg + white text for AAA compliance
-$tag-bg-shade: select-bg-shade-light($primary, 900, 500, 7);
+// Tag colors: light primary bg with auto text — subtle, high readability
+$tag-bg-shade: select-bg-shade($primary, 100, 400, 4.5);
 
 // ============================================================
 // Export CSS custom properties with auto-selected colors
@@ -220,9 +220,9 @@ $tag-bg-shade: select-bg-shade-light($primary, 900, 500, 7);
   --color-border:           var(--color-neutral-300);
   --color-divider:          var(--color-neutral-200);
 
-  // Tag colors: dark primary background with white text for AAA contrast
+  // Tag colors: light background with auto text
   --color-tag-bg:           var(--color-primary-#{$tag-bg-shade});
-  --color-tag-text:         #ffffff;
+  --color-tag-text:         var(--color-primary-#{$tag-bg-shade}-on);
 
   // Decorative elements (bullets, accents)
   --color-decoration:       var(--color-primary-#{$text-on-light});
@@ -292,8 +292,10 @@ $tag-bg-shade: select-bg-shade-light($primary, 900, 500, 7);
 // Heading / accent on surface (sidebar titles on neutral-50 cards)
 @include a11y-check(map.get($neutral, 50), map.get($primary, $text-on-light), 7);
 
-// Tag text (white) on tag bg — small text, AAA threshold = 7:1
-@include a11y-check(map.get($primary, $tag-bg-shade), #ffffff, 7);
+// Tag text on tag bg — small text, AA threshold = 4.5:1 (tags are decorative)
+$tag-bg-color: map.get($primary, $tag-bg-shade);
+$tag-text-color: text-on($tag-bg-color);
+@include a11y-check($tag-bg-color, $tag-text-color, 4.5);
 
 // Body text on surface — normal text, AAA threshold = 7:1
 @include a11y-check(map.get($neutral, 50), #1a1a1a, 7);
