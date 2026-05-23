@@ -41,15 +41,17 @@ $primary-base: #1B4F72 !default;   // Deep navy blue — financial/professional
 }
 
 /// Pick dark or light text for a given background.
-/// Enforces semantic pairing: light bg → dark text, dark bg → light text.
-/// Uses luminance (not contrast) to decide which side the bg falls on.
+/// Compares actual contrast ratios and picks the color with higher contrast.
 @function text-on($bg) {
-  @if luminance($bg) > 0.4 {
-    // Light background → dark text
-    @return #1a1a1a;
+  $dark: #1a1a1a;
+  $light: #ffffff;
+  $contrast-dark: contrast($bg, $dark);
+  $contrast-light: contrast($bg, $light);
+  // Pick the text color with the higher contrast ratio
+  @if $contrast-dark >= $contrast-light {
+    @return $dark;
   }
-  // Dark background → light text
-  @return #ffffff;
+  @return $light;
 }
 
 /// Generate equally-spaced tint → shade ramp (10 stops, 50–900)
@@ -67,7 +69,7 @@ $primary-base: #1B4F72 !default;   // Deep navy blue — financial/professional
     // offset inverted: 50=lightest, 900=darkest
     $offset: ($base-idx - $i) * 7%;
     $adj: math.clamp(3%, $l + $offset, 95%);
-    $result: map.set($result, $stop, hsl($h, $s, $adj));
+    $result: map.set($result, $stop, color.to-space(hsl($h, $s, $adj), srgb));
   }
   @return $result;
 }
@@ -79,7 +81,7 @@ $primary-base: #1B4F72 !default;   // Deep navy blue — financial/professional
   @for $i from 1 through list.length($stops) {
     $stop: list.nth($stops, $i);
     $l: 97% - ($i - 1) * 10%;
-    $result: map.set($result, $stop, hsl(210, 4%, $l));
+    $result: map.set($result, $stop, color.to-space(hsl(210, 4%, $l), srgb));
   }
   @return $result;
 }
@@ -89,9 +91,9 @@ $primary-base: #1B4F72 !default;   // Deep navy blue — financial/professional
 // ============================================================
 
 /// Select the best shade for TEXT on a LIGHT background.
-/// Tries shades from lightest to darkest until contrast ≥ 4.5:1 is met.
+/// Tries shades from lightest to darkest until contrast ≥ $min is met.
 /// Returns the shade number (e.g., 500, 600, 700).
-@function select-text-shade($palette, $start: 500, $end: 900) {
+@function select-text-shade($palette, $start: 500, $end: 900, $min: 4.5) {
   $shades: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900);
   $start-idx: list.index($shades, $start);
   $end-idx: list.index($shades, $end);
@@ -99,7 +101,7 @@ $primary-base: #1B4F72 !default;   // Deep navy blue — financial/professional
   @for $i from $start-idx through $end-idx {
     $shade: list.nth($shades, $i);
     $color: map.get($palette, $shade);
-    @if contrast(#ffffff, $color) >= 4.5 {
+    @if contrast(#ffffff, $color) >= $min {
       @return $shade;
     }
   }
@@ -108,9 +110,9 @@ $primary-base: #1B4F72 !default;   // Deep navy blue — financial/professional
 }
 
 /// Select the best shade for a BACKGROUND that will have DARK text on it.
-/// Tries shades from lightest until we find one where dark text has ≥ 4.5:1 contrast.
+/// Tries shades from lightest until we find one where dark text has ≥ $min contrast.
 /// Returns the shade number.
-@function select-bg-shade($palette, $start: 50, $end: 300) {
+@function select-bg-shade($palette, $start: 50, $end: 300, $min: 4.5) {
   $shades: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900);
   $start-idx: list.index($shades, $start);
   $end-idx: list.index($shades, $end);
@@ -118,7 +120,7 @@ $primary-base: #1B4F72 !default;   // Deep navy blue — financial/professional
   @for $i from $start-idx through $end-idx {
     $shade: list.nth($shades, $i);
     $color: map.get($palette, $shade);
-    @if contrast($color, #1a1a1a) >= 4.5 {
+    @if contrast($color, #1a1a1a) >= $min {
       @return $shade;
     }
   }
@@ -127,9 +129,9 @@ $primary-base: #1B4F72 !default;   // Deep navy blue — financial/professional
 }
 
 /// Select the best shade for a BACKGROUND that will have WHITE text on it.
-/// Tries shades from darkest until we find one where white text has ≥ 4.5:1 contrast.
+/// Tries shades from darkest until we find one where white text has ≥ $min contrast.
 /// Returns the shade number.
-@function select-bg-shade-light($palette, $start: 900, $end: 500) {
+@function select-bg-shade-light($palette, $start: 900, $end: 500, $min: 4.5) {
   $shades: (900, 800, 700, 600, 500, 400, 300, 200, 100, 50);
   $start-idx: list.index($shades, $start);
   $end-idx: list.index($shades, $end);
@@ -137,7 +139,7 @@ $primary-base: #1B4F72 !default;   // Deep navy blue — financial/professional
   @for $i from $start-idx through $end-idx {
     $shade: list.nth($shades, $i);
     $color: map.get($palette, $shade);
-    @if contrast($color, #ffffff) >= 4.5 {
+    @if contrast($color, #ffffff) >= $min {
       @return $shade;
     }
   }
@@ -166,27 +168,34 @@ $primary:   palette($primary-base);
 $neutral:   neutral-ramp();
 
 // ----- Auto-select optimal shades for different use cases -----
-$text-on-light: select-text-shade($primary, 500, 900);           // For headings, accents on white
-$bg-with-dark-text: select-bg-shade($primary, 50, 400);          // For tag backgrounds, light backgrounds
-$bg-with-light-text: select-bg-shade-light($primary, 900, 500);  // For dark backgrounds with white text
+$text-on-light: select-text-shade($primary, 500, 900, 7);             // Headings, accents on white (AAA 7:1)
+$bg-with-dark-text: select-bg-shade($primary, 50, 400);               // Light backgrounds (AA 4.5:1)
+$bg-with-dark-text-aaa: select-bg-shade($primary, 50, 400, 7);        // Light backgrounds (AAA 7:1)
+$bg-with-light-text: select-bg-shade-light($primary, 900, 500);       // Dark backgrounds with white text
 
-// Calculate complementary shades for paired elements
-$tag-bg-shade: $bg-with-dark-text;
-$tag-text-shade: if($tag-bg-shade == 50, 800, select-text-for-bg($primary, $tag-bg-shade));
+// Tag colors: dark primary bg + white text for AAA compliance
+$tag-bg-shade: select-bg-shade-light($primary, 900, 500, 7);
 
 // ============================================================
 // Export CSS custom properties with auto-selected colors
 // ============================================================
 :root {
   // Primary palette with auto-calculated text colors
+  // Use rgb() to ensure consistent rendering across SCSS and browser
   @each $stop, $color in $primary {
-    --color-primary-#{$stop}: #{$color};
+    $r: math.round(color.channel($color, 'red', $space: srgb) * 255);
+    $g: math.round(color.channel($color, 'green', $space: srgb) * 255);
+    $b: math.round(color.channel($color, 'blue', $space: srgb) * 255);
+    --color-primary-#{$stop}: rgb(#{$r}, #{$g}, #{$b});
     --color-primary-#{$stop}-on: #{text-on($color)};
   }
 
   // Neutral palette with auto-calculated text colors
   @each $stop, $color in $neutral {
-    --color-neutral-#{$stop}: #{$color};
+    $r: math.round(color.channel($color, 'red', $space: srgb) * 255);
+    $g: math.round(color.channel($color, 'green', $space: srgb) * 255);
+    $b: math.round(color.channel($color, 'blue', $space: srgb) * 255);
+    --color-neutral-#{$stop}: rgb(#{$r}, #{$g}, #{$b});
     --color-neutral-#{$stop}-on: #{text-on($color)};
   }
 
@@ -205,15 +214,15 @@ $tag-text-shade: if($tag-bg-shade == 50, 800, select-text-for-bg($primary, $tag-
   // Text colors
   --color-text-primary:     #1a1a1a;
   --color-text-secondary:   var(--color-neutral-700);
-  --color-text-muted:       var(--color-neutral-600);
+  --color-text-muted:       var(--color-neutral-700);
 
   // Borders & dividers
   --color-border:           var(--color-neutral-300);
   --color-divider:          var(--color-neutral-200);
 
-  // Tag colors: auto-selected background with contrasting text
+  // Tag colors: dark primary background with white text for AAA contrast
   --color-tag-bg:           var(--color-primary-#{$tag-bg-shade});
-  --color-tag-text:         var(--color-primary-#{$tag-text-shade});
+  --color-tag-text:         #ffffff;
 
   // Decorative elements (bullets, accents)
   --color-decoration:       var(--color-primary-#{$text-on-light});
@@ -258,18 +267,36 @@ $tag-text-shade: if($tag-bg-shade == 50, 800, select-text-for-bg($primary, $tag-
 
 // ============================================================
 // A11Y verification — compile-time assertions
-// (Sass will error if any text-on-background pair fails 4.5:1)
+// Sass will error if any text-on-background pair fails its threshold.
+//
+// WCAG thresholds:
+//   AA  normal text: 4.5:1   large text (≥18px / ≥14px bold): 3:1
+//   AAA normal text: 7:1     large text (≥18px / ≥14px bold): 4.5:1
+//
+// Heading name (1.5rem bold → 24px bold) and section titles (1.125rem → 18px)
+// qualify as large text → AAA threshold = 4.5:1.
+// Body text (0.8125rem → 13px) is normal text → AAA threshold = 7:1.
+// Tags (0.6875rem → 11px) are normal text → AAA threshold = 7:1.
 // ============================================================
-@mixin a11y-check($bg, $fg) {
+@mixin a11y-check($bg, $fg, $min: 4.5) {
   $c: contrast($bg, $fg);
-  @if $c < 4.5 {
-    @error "A11Y FAIL: contrast #{$c} < 4.5 between bg #{$bg} and fg #{$fg}";
+  @if $c < $min {
+    @error "A11Y FAIL: contrast #{$c} < #{$min} between bg #{$bg} and fg #{$fg}";
   }
 }
 
-// Verify ALL auto-selected color combinations
-@include a11y-check(#ffffff, map.get($primary, $text-on-light));         // heading/accent on white
-@include a11y-check(map.get($primary, $tag-bg-shade), map.get($primary, $tag-text-shade)); // tag text on tag bg
-@include a11y-check(map.get($neutral, 50), #1a1a1a);                      // body text on surface
-@include a11y-check(#ffffff, #1a1a1a);                                    // body text on white bg
-@include a11y-check(map.get($neutral, 50), map.get($primary, $tag-text-shade)); // tag text on neutral bg (fallback check)
+// Heading / accent on white — used for normal text (section titles ≤18px normal weight),
+// so AAA threshold = 7:1
+@include a11y-check(#ffffff, map.get($primary, $text-on-light), 7);
+
+// Heading / accent on surface (sidebar titles on neutral-50 cards)
+@include a11y-check(map.get($neutral, 50), map.get($primary, $text-on-light), 7);
+
+// Tag text (white) on tag bg — small text, AAA threshold = 7:1
+@include a11y-check(map.get($primary, $tag-bg-shade), #ffffff, 7);
+
+// Body text on surface — normal text, AAA threshold = 7:1
+@include a11y-check(map.get($neutral, 50), #1a1a1a, 7);
+
+// Body text on white bg — normal text, AAA threshold = 7:1
+@include a11y-check(#ffffff, #1a1a1a, 7);
