@@ -8,7 +8,7 @@ description: Interview users to build printable A4 resumes with SCSS theming and
 ## Setup
 
 ```bash
-cd <skill-dir>    # directory containing this SKILL.md
+cd <skill-dir>/scripts    # directory containing package.json
 npm install
 npx playwright install chromium
 ```
@@ -25,7 +25,11 @@ Help the user know themselves and the target job. Explore these angles — adapt
 
 **Sections** — after exploring each area, edit `index.html` directly. Common sections: header, summary, work experience, skills, education, certs, languages, projects. Add, remove, or reorder freely.
 
-Start from `index.html` — it's a template, not a contract. You can freely edit anything: add/remove sections, tweak the SCSS in `styles/`, adjust font sizes and spacing in `theme.scss`, restructure the grid layout, or modify the color palette. The only constraint is to follow the workflow (build → theme → verify → preview). See [REFERENCE.md](REFERENCE.md) for CSS classes.
+Start from `index.html` — it's a template, not a contract. You can freely edit anything: add/remove sections, tweak the SCSS in `styles/`, adjust font sizes and spacing in `theme.scss`, restructure the grid layout, or modify the color palette.
+
+**Layout flexibility**: the default two-column layout (main + sidebar) is not mandatory. If a single-column or alternative layout better suits the content, restructure the HTML and SCSS accordingly. Adjust `--sidebar-width` in `styles/_palette.scss` to resize the sidebar column, or remove `.resume-grid` entirely for a single-column page. See [REFERENCE.md](REFERENCE.md) for CSS classes.
+
+The only constraint is to follow the workflow (build → theme → verify → preview).
 
 ### 2. Theme
 
@@ -36,6 +40,12 @@ npm run build:css
 ```
 
 Pick any hex color — the compiler auto-generates a full palette and rejects combinations that fail contrast requirements. If it errors, try a darker or more saturated variant.
+
+For iterative theming, use watch mode to auto-compile on changes:
+
+```bash
+npm run watch:css
+```
 
 ### 3. Verify
 

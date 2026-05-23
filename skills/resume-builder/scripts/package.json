@@ -9,6 +9,7 @@
   "type": "module",
   "scripts": {
     "build:css": "sass styles/theme.scss styles/theme.css --no-source-map",
+    "watch:css": "sass --watch styles/theme.scss:styles/theme.css --no-source-map",
     "dev": "serve . -l 3000",
     "test": "playwright test",
     "test:ui": "playwright test --ui",

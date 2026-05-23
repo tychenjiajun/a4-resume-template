@@ -381,6 +381,85 @@ test.describe('Resume Page - Blank Space Detection', () => {
     }
   });
 
+  // ── Last section → page bottom gap ───────────────────────────
+  // Tracks how much unused space remains in the main column after
+  // the last .section, helping fine-tune content density.
+  const MAX_LAST_SECTION_BOTTOM_GAP_PX = 150;
+
+  test('.section:last should not have excessive gap to page bottom (normal view)', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('load');
+
+    const gaps = await page.evaluate(() => {
+      const results: Array<{ page: number; lastTitle: string; sectionBottom: number; pageHeight: number; gapPx: number }> = [];
+
+      document.querySelectorAll('.resume-page').forEach((pageEl, idx) => {
+        const pageRect = pageEl.getBoundingClientRect();
+        const lastSection = pageEl.querySelector('.section:last-of-type');
+        if (!lastSection) return;
+
+        const sectionRect = lastSection.getBoundingClientRect();
+        const sectionBottom = sectionRect.bottom - pageRect.top;
+        const gap = pageRect.height - sectionBottom;
+        const title = lastSection.querySelector('.section-title')?.textContent?.trim() || '(none)';
+
+        results.push({
+          page: idx + 1,
+          lastTitle: title,
+          sectionBottom: Math.round(sectionBottom),
+          pageHeight: Math.round(pageRect.height),
+          gapPx: Math.round(gap),
+        });
+      });
+
+      return results;
+    });
+
+    for (const g of gaps) {
+      console.log(
+        `Page ${g.page} .section:last ("${g.lastTitle}"): bottom=${g.sectionBottom}px / page=${g.pageHeight}px → gap=${g.gapPx}px`
+      );
+      expect(g.gapPx).toBeLessThanOrEqual(MAX_LAST_SECTION_BOTTOM_GAP_PX);
+    }
+  });
+
+  test('.section:last should not have excessive gap to page bottom (print preview)', async ({ page }) => {
+    await page.goto('/?print');
+    await page.waitForLoadState('load');
+
+    const gaps = await page.evaluate(() => {
+      const results: Array<{ page: number; lastTitle: string; sectionBottom: number; pageHeight: number; gapPx: number }> = [];
+
+      document.querySelectorAll('.resume-page').forEach((pageEl, idx) => {
+        const pageRect = pageEl.getBoundingClientRect();
+        const lastSection = pageEl.querySelector('.section:last-of-type');
+        if (!lastSection) return;
+
+        const sectionRect = lastSection.getBoundingClientRect();
+        const sectionBottom = sectionRect.bottom - pageRect.top;
+        const gap = pageRect.height - sectionBottom;
+        const title = lastSection.querySelector('.section-title')?.textContent?.trim() || '(none)';
+
+        results.push({
+          page: idx + 1,
+          lastTitle: title,
+          sectionBottom: Math.round(sectionBottom),
+          pageHeight: Math.round(pageRect.height),
+          gapPx: Math.round(gap),
+        });
+      });
+
+      return results;
+    });
+
+    for (const g of gaps) {
+      console.log(
+        `Page ${g.page} .section:last (print, "${g.lastTitle}"): bottom=${g.sectionBottom}px / page=${g.pageHeight}px → gap=${g.gapPx}px`
+      );
+      expect(g.gapPx).toBeLessThanOrEqual(MAX_LAST_SECTION_BOTTOM_GAP_PX);
+    }
+  });
+
   // ── Section gaps ──────────────────────────────────────────────
   test('should have no gaps larger than 60px between sections (normal view)', async ({ page }) => {
     const analysis = await analyzeBlankSpace(page, 'normal');

@@ -56,7 +56,7 @@ body {
 // ============================================================
 .resume-grid {
   display: grid;
-  grid-template-columns: 1fr 220px;
+  grid-template-columns: 1fr var(--sidebar-width);
   grid-template-rows: auto 1fr;
   gap: 0 var(--column-gap);
   height: 100%;

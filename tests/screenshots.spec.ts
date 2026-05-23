@@ -42,6 +42,12 @@ test.describe('Resume Screenshots', () => {
       await page.goto(url);
       await page.waitForLoadState('networkidle');
 
+      const pageCount = await page.locator('.resume-page').count();
+      if (pageCount < 2) {
+        test.skip(true, 'Only one resume page, skipping page 2 screenshot');
+        return;
+      }
+
       const page2 = page.locator('.resume-page').nth(1);
 
       const screenshot = await page2.screenshot({
