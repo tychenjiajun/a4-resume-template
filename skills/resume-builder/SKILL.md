@@ -1,6 +1,6 @@
 ---
 name: resume-builder
-description: Interview users to build printable A4 resumes with SCSS theming and automatic color palettes. Use when user asks to "make resume", "create CV", or wants a printable resume.
+description: Interview users (grill-me style) to build JD-aligned, printable A4 resumes with SCSS theming and automatic color palettes. Asks one question at a time: first aligning experience to the job description, then pulling their narrative, then agreeing on sections and layout before editing. Use when user asks to "make resume", "create CV", "tailor my resume to a job", or wants a printable resume.
 ---
 
 # Resume Builder
@@ -17,13 +17,31 @@ npx playwright install chromium
 
 ### 1. Interview & build
 
-Help the user know themselves and the target job. Explore these angles — adapt order and depth to what they already know:
+Interview the user one question at a time. Walk down each branch of the decision tree, resolving dependencies before moving on. For each question, provide your recommended answer based on what you've learned so far. Explore the codebase to verify constraints before making recommendations.
 
-**The target:** role, company/industry, seniority, what the job actually needs (ask for the JD). Identify which of the user's experience maps to each requirement, and where the gaps are.
+#### Phase A — Job alignment
 
-**Their story:** what makes them different? Career pivots or connecting threads? Any red flags they're worried about? Pull threads until you find the narrative.
+Ask for the JD (paste or describe). Extract every explicit requirement — skills, experience, qualifications, traits. For each requirement, ask the user: *"Do you have experience with this? Tell me specifically what you did."* Map their answers to resume bullets. Flag gaps honestly — suggest ways to bridge them if possible.
 
-**Sections** — after exploring each area, edit `index.html` directly. Common sections: header, summary, work experience, skills, education, certs, languages, projects. Add, remove, or reorder freely.
+Ask about: role, company/industry, seniority level, team size, tech stack, and any unwritten expectations (culture, pace, domain expertise).
+
+#### Phase B — Their story
+
+Pull the threads: what makes them different? Career pivots or connecting themes? Achievements they're proud of? Red flags they're worried about (gaps, short stints, career changes)? Don't let them settle for safe answers — drill until you find a narrative that stands out.
+
+Ask: *"What would your past manager say you're unreasonably good at?"* and *"What part of this job would make you the most nervous?"*
+
+#### Phase C — Sections & layout
+
+Before editing any file, agree on structure. Ask one decision at a time:
+
+1. **Layout**: single-column or two-column (main + sidebar)? Recommend based on experience level — two-column for mid/senior (sidebar for skills/certs), single-column for early-career or research CVs.
+2. **Sections to include** (pick from: header, summary, work experience, skills, education, certs, languages, projects, publications, volunteering, interests). Recommend based on the JD — drop what the job doesn't care about.
+3. **Section order**: what goes first after the header? Recommend putting the most JD-aligned content highest.
+
+Only after the user confirms all three decisions, begin editing `index.html`.
+
+#### Editing rules
 
 Start from `index.html` — it's a template, not a contract. You can freely edit anything: add/remove sections, tweak the SCSS in `styles/`, adjust font sizes and spacing in `theme.scss`, restructure the grid layout, or modify the color palette.
 
