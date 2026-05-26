@@ -1,6 +1,7 @@
 ---
 name: resume-builder
-description: Interview users (grill-me style) to build JD-aligned, printable A4 resumes with SCSS theming and automatic color palettes. Asks one question at a time: first aligning experience to the job description, then pulling their narrative, then agreeing on sections and layout before editing. Use when user asks to "make resume", "create CV", "tailor my resume to a job", or wants a printable resume.
+description: >-
+  Interview users (grill-me style) to build JD-aligned, printable A4 resumes with SCSS theming and automatic color palettes. Asks one question at a time: first aligning experience to the job description, then pulling their narrative, then agreeing on sections and layout before editing. Use when user asks to "make resume", "create CV", "tailor my resume to a job", or wants a printable resume.
 ---
 
 # Resume Builder
